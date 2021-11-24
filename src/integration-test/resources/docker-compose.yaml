@@ -1,0 +1,39 @@
+version:  "2.4"
+
+services:
+ zookeeper:
+  image: zookeeper:3.6
+  container_name: zookeeper
+
+ solr:
+  image: solr:8.11.0-slim
+  container_name: solr
+  depends_on:
+   - zookeeper
+  environment:
+   - ZK_HOST=zookeeper:2181
+  volumes:
+    - ./security.json:/opt/solr/server/solr/security.json
+    - ../../../target/solr-forward-auth-plugin-0-SNAPSHOT-jar-with-dependencies.jar:/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/solr-forward-auth-plugin.jar
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.solr.rule=Host(`localhost`)"
+    - "traefik.http.routers.solr.middlewares=solr_auth"
+    - "traefik.http.middlewares.solr_auth.basicauth.users=solr:$$apr1$$tjyXLcX7$$il4BmI.ap20OQ6CLhKmeh."
+    - "traefik.http.middlewares.solr_auth.basicauth.realm=Solr guarded by Traefik"
+    - "traefik.http.middlewares.solr_auth.basicauth.headerField=X-Forwarded-User"
+    - "traefik.http.middlewares.solr_auth.basicauth.removeheader=true"
+
+ traefik:
+  image: traefik:2.5.4
+  container_name: traefik
+  command:
+    - --api.insecure=true
+    - --providers.docker
+    - --providers.docker.exposedByDefault=false
+    - --entrypoints.web.address=:80
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  ports:
+    - 8983:80
+    - 8080:8080

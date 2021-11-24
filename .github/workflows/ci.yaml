@@ -1,0 +1,32 @@
+name: continuous integration
+
+# Build every push and every pull request
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk: [ 11, 17 ]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Select JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ matrix.jdk }}
+        distribution: temurin
+        cache: maven
+
+    # Run all the way to the install goal to have artifacts
+    # in the local maven repo. we need them for later dependency
+    # analysis
+    - name: Build
+      run: mvn --batch-mode --no-transfer-progress install --file pom.xml
+
+    - name: Dependecy Analysis
+      run: mvn --batch-mode --no-transfer-progress dependency:tree --file pom.xml -Dverbose
