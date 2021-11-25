@@ -3,18 +3,16 @@ version:  "2.4"
 services:
  zookeeper:
   image: zookeeper:3.6
-  container_name: zookeeper
 
  solr:
   image: solr:8.11.0-slim
-  container_name: solr
   depends_on:
    - zookeeper
   environment:
    - ZK_HOST=zookeeper:2181
   volumes:
     - ./security.json:/opt/solr/server/solr/security.json
-    - ../../../target/solr-forward-auth-plugin-0-SNAPSHOT-jar-with-dependencies.jar:/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/solr-forward-auth-plugin.jar
+    - ../../../target/solr-forward-auth-plugin-0-SNAPSHOT.jar:/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/solr-forward-auth-plugin.jar
   labels:
     - "traefik.enable=true"
     - "traefik.http.routers.solr.rule=Host(`localhost`)"
@@ -26,7 +24,6 @@ services:
 
  traefik:
   image: traefik:2.5.4
-  container_name: traefik
   command:
     - --api.insecure=true
     - --providers.docker
