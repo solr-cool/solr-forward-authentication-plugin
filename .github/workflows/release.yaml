@@ -1,0 +1,103 @@
+name: release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Install gpg secret key
+      run: |
+        cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
+        gpg --list-secret-keys --keyid-format LONG
+
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Select JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: 11
+        distribution: temurin
+        cache: maven
+        server-id: ossrh
+        server-username: OSSRH_USERNAME
+        server-password: OSSRH_PASSWORD
+
+    - name: Build and publish a release
+      run: |
+        mvn --version
+        mvn --batch-mode \
+            --no-transfer-progress \
+            org.codehaus.mojo:versions-maven-plugin:2.8.1:set \
+            -DgenerateBackupPoms=false \
+            -DnewVersion=${{ github.event.inputs.version }}
+        mvn --batch-mode \
+            --no-transfer-progress \
+            -P release \
+            -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} \
+            -Dgpg.keyname=tbk@thiswayup.de \
+            clean deploy
+      env:
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        release_name: ${{ github.event.inputs.version }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset (.jar)
+      id: upload-release-jar
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/solr-thymeleaf-${{ github.event.inputs.version }}.jar
+        asset_name: solr-thymeleaf-${{ github.event.inputs.version }}.jar
+        asset_content_type: application/java-archive
+
+    - name: Upload Release Asset (-sources.jar)
+      id: upload-release-source-jar
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/solr-thymeleaf-${{ github.event.inputs.version }}-sources.jar
+        asset_name: solr-thymeleaf-${{ github.event.inputs.version }}-sources.jar
+        asset_content_type: application/java-archive
+
+    - name: Upload Release Asset (-javadoc.jar)
+      id: upload-release-javadoc-jar
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/solr-thymeleaf-${{ github.event.inputs.version }}-javadoc.jar
+        asset_name: solr-thymeleaf-${{ github.event.inputs.version }}-javadoc.jar
+        asset_content_type: application/java-archive
+
+    - name: Upload Release Asset (.pom)
+      id: upload-release-pom
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/solr-thymeleaf-${{ github.event.inputs.version }}.pom
+        asset_name: solr-thymeleaf-${{ github.event.inputs.version }}.pom
+        asset_content_type: application/xml
