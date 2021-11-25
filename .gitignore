@@ -4,3 +4,6 @@ target
 .project
 .classpath
 .factorypath
+
+*.key
+*.pem
