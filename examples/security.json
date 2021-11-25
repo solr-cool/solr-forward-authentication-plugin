@@ -1,0 +1,15 @@
+{
+    "authentication": {
+        "class": "cool.solr.security.ForwardAuthPlugin"
+    },
+    "authorization": {
+        "class": "cool.solr.security.DefaultRuleBasedAuthorizationPlugin",
+        "defaultRole": "admin",
+        "permissions": [
+            {
+                "name": "all",
+                "role": "admin"
+            }
+        ]
+    }
+}

@@ -18,13 +18,43 @@ accordingly.
 
 ## How to use the plugin
 
-### Installation
+> Before using the plugin, please be familiar with
+> [Solr authentication and authorization](https://solr.apache.org/guide/8_11/authentication-and-authorization-plugins.html).
 
-There are two types of installation possible
+### Install the plugin
 
-1. Either place [release jar](https://github.com/solr-cool/solr-forward-authentication-plugin/releases)
-in your Solr library directory.
-1. Plugin installation
+You can either drop the
+[release jar](https://github.com/solr-cool/solr-forward-authentication-plugin/releases)
+into the library directory of your Solr installation or install this plugin
+using the [Solr plugin system](https://solr.apache.org/guide/8_11/solr-plugins.html):
+
+```shell
+bin/solr package add-repo solr-forward-auth \
+    "https://raw.githubusercontent.com/solr-cool/solr-forward-authentication-plugin/main/repo/"
+bin/solr package install solr-forward-authentication
+bin/solr package deploy solr-forward-authentication -y -cluster
+```
+
+#### Updating to a newer version
+To check installed version and available versions of the package,
+
+```shell
+bin/solr package list-installed
+bin/solr package list-available
+```
+
+To update to a newer version,
+
+```shell
+bin/solr package install solr-forward-authentication:<new-version>
+bin/solr package deploy solr-forward-authentication:<new-version> -y -cluster -update
+```
+
+#### Undeploying
+
+```shell
+bin/solr package undeploy solr-forward-authentication -cluster
+```
 
 ### Configure authentication
 
@@ -56,6 +86,21 @@ in your Solr library directory.
         ]
     }
 }
+```
+
+### Example
+
+The [`examples`](examples/) folder contains a simple Docker Compose ensemble.
+From inside the directory, launch the Solr/Zookeeper ensemble:
+
+```shell
+$ docker-compose up
+
+# Test connectivity (should return 200 OK)
+$ curl -I http://localhost:8983/solr/ping
+
+# Activate security
+$ docker exec -it solr solr zk cp file:/opt/solr/server/solr/security.json zk:/security.json -z zookeeper:2181
 ```
 
 ## Building the project

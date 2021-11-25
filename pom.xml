@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cool.solr</groupId>
-    <artifactId>solr-forward-auth-plugin</artifactId>
-    <name>solr-forward-auth-plugin</name>
+    <artifactId>solr-forward-authentication-plugin</artifactId>
+    <name>solr-forward-authentication-plugin</name>
     <version>0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>A Solr plugin that implements forward authentication</description>
