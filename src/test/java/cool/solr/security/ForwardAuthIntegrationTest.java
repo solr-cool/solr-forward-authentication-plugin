@@ -33,7 +33,7 @@ public class ForwardAuthIntegrationTest {
         ContainerState solr = (ContainerState) environment.getContainerByServiceName("solr_1").get();
 
         synchronized(solr) {
-            solr.wait(2000);
+            solr.wait(5000);
         }
 
         // enable the loaded security.json
