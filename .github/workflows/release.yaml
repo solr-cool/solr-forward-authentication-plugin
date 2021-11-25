@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DAY_OF_WEEK: Mon
     steps:
 
     - name: Install gpg secret key
@@ -65,8 +67,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: target/solr-thymeleaf-${{ github.event.inputs.version }}.jar
-        asset_name: solr-thymeleaf-${{ github.event.inputs.version }}.jar
+        asset_path: target/solr-forward-authentication-plugin-${{ github.event.inputs.version }}.jar
+        asset_name: solr-forward-authentication-plugin-${{ github.event.inputs.version }}.jar
         asset_content_type: application/java-archive
 
     - name: Upload Release Asset (-sources.jar)
@@ -76,8 +78,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: target/solr-thymeleaf-${{ github.event.inputs.version }}-sources.jar
-        asset_name: solr-thymeleaf-${{ github.event.inputs.version }}-sources.jar
+        asset_path: target/solr-forward-authentication-plugin-${{ github.event.inputs.version }}-sources.jar
+        asset_name: solr-forward-authentication-plugin-${{ github.event.inputs.version }}-sources.jar
         asset_content_type: application/java-archive
 
     - name: Upload Release Asset (-javadoc.jar)
@@ -87,8 +89,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: target/solr-thymeleaf-${{ github.event.inputs.version }}-javadoc.jar
-        asset_name: solr-thymeleaf-${{ github.event.inputs.version }}-javadoc.jar
+        asset_path: target/solr-forward-authentication-plugin-${{ github.event.inputs.version }}-javadoc.jar
+        asset_name: solr-forward-authentication-plugin-${{ github.event.inputs.version }}-javadoc.jar
         asset_content_type: application/java-archive
 
     - name: Upload Release Asset (.pom)
@@ -98,6 +100,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: target/solr-thymeleaf-${{ github.event.inputs.version }}.pom
-        asset_name: solr-thymeleaf-${{ github.event.inputs.version }}.pom
+        asset_path: target/solr-forward-authentication-plugin-${{ github.event.inputs.version }}.pom
+        asset_name: solr-forward-authentication-plugin-${{ github.event.inputs.version }}.pom
         asset_content_type: application/xml
