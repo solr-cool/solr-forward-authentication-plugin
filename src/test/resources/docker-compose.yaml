@@ -12,7 +12,7 @@ services:
    - ZK_HOST=zookeeper:2181
   volumes:
     - ./security.json:/opt/solr/server/solr/security.json
-    - ../../../target/solr-forward-auth-plugin-0-SNAPSHOT.jar:/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/solr-forward-auth-plugin.jar
+    - ../../../target/solr-forward-authentication-plugin-0-SNAPSHOT.jar:/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/solr-forward-authentication-plugin.jar
   labels:
     - "traefik.enable=true"
     - "traefik.http.routers.solr.rule=Host(`localhost`)"
