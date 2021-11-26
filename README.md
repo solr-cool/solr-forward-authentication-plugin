@@ -23,38 +23,9 @@ accordingly.
 
 ### Install the plugin
 
-You can either drop the
+Drop the
 [release jar](https://github.com/solr-cool/solr-forward-authentication-plugin/releases)
-into the library directory of your Solr installation or install this plugin
-using the [Solr plugin system](https://solr.apache.org/guide/8_11/solr-plugins.html):
-
-```shell
-bin/solr package add-repo solr-forward-auth \
-    "https://raw.githubusercontent.com/solr-cool/solr-forward-authentication-plugin/main/repo/"
-bin/solr package install solr-forward-authentication
-bin/solr package deploy solr-forward-authentication -y -cluster
-```
-
-#### Updating to a newer version
-To check installed version and available versions of the package,
-
-```shell
-bin/solr package list-installed
-bin/solr package list-available
-```
-
-To update to a newer version,
-
-```shell
-bin/solr package install solr-forward-authentication:<new-version>
-bin/solr package deploy solr-forward-authentication:<new-version> -y -cluster -update
-```
-
-#### Undeploying
-
-```shell
-bin/solr package undeploy solr-forward-authentication -cluster
-```
+into the library directory of your Solr installation.
 
 ### Configure authentication
 
@@ -108,16 +79,6 @@ $ docker exec -it solr solr zk cp file:/opt/solr/server/solr/security.json zk:/s
 This should install the current version into your local repository
 
     $ ./mvn clean verify
-
-### Updating the Solr repo
-
-```shell
-$ openssl genrsa -out solr-repo.pem 512
-$ openssl rsa -in solr-repo.pem -pubout -outform DER -out repo/publickey.der
-$ curl -sfLo target/release.jar RELEASE_URL
-$ openssl dgst -sha1 -sign solr-repo.pem target/release.jar | openssl enc -base64 | tr -d \\n | sed
-
-```
 
 ## License
 
