@@ -1,0 +1,33 @@
+{
+    "version-constraint": "8 - 9",
+    "plugins": [
+      {
+        "name": "solr-forward-authentication",
+        "type": "cluster",
+        "setup-command": {
+            "path": "/api/cluster/plugin",
+            "method": "POST",
+            "payload": {
+              "add": {
+                "name": "${package-name}:${plugin-name}",
+                "class": "solr-forward-authentication:cool.solr.security.ForwardAuthPluginLoader",
+                "version": "${package-version}"
+              }
+            }
+          },
+          "verify-command": {
+            "path": "/api/cluster/zk/data/clusterprops.json",
+            "method": "GET",
+            "condition": "$['plugin'].['${package-name}:${plugin-name}'].['version']",
+            "expected": "${package-version}"
+          },
+          "uninstall-command": {
+            "path": "/api/cluster/plugin",
+            "method": "POST",
+            "payload": {
+              "remove": "${package-name}:${plugin-name}"
+            }
+          }
+      }
+    ]
+  }

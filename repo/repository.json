@@ -1,18 +1,18 @@
 [
-    {
-      "name": "solr-forward-authentication",
-      "description": "A forward authentiction plugin",
-      "versions": [
-        {
-          "version": "0.1.1",
-          "date": "2021-11-25",
-          "artifacts": [
-            {
-              "url": "https://github.com/solr-cool/solr-forward-authentication-plugin/releases/download/0.1.1/solr-forward-authentication-plugin-0.1.1.jar",
-              "sig": "Ltso6xcYwUvLGQKYhhKb+2jClOav38Q9uINB6PvR6R8Gcg+aiXNV079e/G3BftE/uddy+VxCyC1jCquQlny+JQ=="
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  {
+    "name": "solr-forward-authentication",
+    "description": "A forward authentiction plugin",
+    "versions": [
+      {
+        "version": "0.1.1",
+        "date": "2021-11-25",
+        "artifacts": [
+          {
+            "url": "https://github.com/solr-cool/solr-forward-authentication-plugin/releases",
+            "sig": "Ltso6xcYwUvLGQKYhhKb+2jClOav38Q9uINB6PvR6R8Gcg+aiXNV079e/G3BftE/uddy+VxCyC1jCquQlny+JQ=="
+          }
+        ]
+      }
+    ]
+  }
+]

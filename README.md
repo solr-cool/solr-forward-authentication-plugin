@@ -93,14 +93,25 @@ bin/solr package undeploy solr-forward-authentication -cluster
 The [`examples`](examples/) folder contains a simple Docker Compose ensemble.
 From inside the directory, launch the Solr/Zookeeper ensemble:
 
-```shell
+```bash
 $ docker-compose up
 
 # Test connectivity (should return 200 OK)
 $ curl -I http://localhost:8983/solr/ping
 
-# Activate security
+# Install forward authentication plugin
+docker exec -it solr solr package add-repo solr-forward-authentication "https://raw.githubusercontent.com/solr-cool/solr-forward-authentication-plugin/main/repo/"
+docker exec -it solr solr package install solr-forward-authentication -cluster
+docker exec -it solr solr package deploy solr-forward-authentication -y -cluster
+
+# Activate Solr security
 $ docker exec -it solr solr zk cp file:/opt/solr/server/solr/security.json zk:/security.json -z zookeeper:2181
+
+# Test security (should return 401)
+$ curl -I http://localhost:8983/solr/ping
+
+# Fake forward authentication (should return 200)
+$ curl -I -H "X-Forwarded-User: alice" http://localhost:8983/solr/ping
 ```
 
 ## Building the project
@@ -118,6 +129,13 @@ $ curl -sfLo target/release.jar RELEASE_URL
 $ openssl dgst -sha1 -sign solr-repo.pem target/release.jar | openssl enc -base64 | tr -d \\n | sed
 
 ```
+
+solr zk cp file:/opt/solr/server/solr/clusterprops.json zk:/clusterprops.json -z zookeeper:2181
+solr package add-repo solr-forward-authentication http://repo:8080
+solr package install solr-forward-authentication -cluster
+solr package deploy solr-forward-authentication -y -cluster
+solr zk cp file:/opt/solr/server/solr/security.json zk:/security.json -z zookeeper:2181
+
 
 ## License
 
