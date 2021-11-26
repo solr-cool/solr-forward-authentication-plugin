@@ -21,24 +21,19 @@ accordingly.
 > Before using the plugin, please be familiar with
 > [Solr authentication and authorization](https://solr.apache.org/guide/8_11/authentication-and-authorization-plugins.html).
 
-### Install the plugin
-
-Drop the
+To use the plugin, drop the
 [release jar](https://github.com/solr-cool/solr-forward-authentication-plugin/releases)
-into the library directory of your Solr installation.
+into the [library directory of your Solr installation](https://solr.apache.org/guide/8_11/libs.html).
 
-### Configure authentication
+### Configure authentication & authorization
 
-```json
-{
-    "authentication": {
-        "class": "cool.solr.security.ForwardAuthPlugin",
-        "httpUserHeader": "X-Forwarded-User"
-    }
-}
-```
+To activate authentication & authorization, place a `security.json`
+in your Zookeeper root.
 
-### Configure authorization
+To activate forward __authentication__ in Solr, use the
+`ForwardAuthPlugin` class as authentication class.
+
+> The `httpUserHeader` is an optional configuration.
 
 ```json
 {
@@ -59,6 +54,10 @@ into the library directory of your Solr installation.
 }
 ```
 
+For __authorization__, the `DefaultRuleBasedAuthorizationPlugin` extends
+the [`RuleBasedAuthorizationPlugin`](https://solr.apache.org/guide/8_11/rule-based-authorization-plugin.html#example-for-rulebasedauthorizationplugin-and-basicauth) by assigning
+users without an explicit `user-role` mapping a `defaultRole`.
+
 ### Example
 
 The [`examples`](examples/) folder contains a simple Docker Compose ensemble.
@@ -68,10 +67,29 @@ From inside the directory, launch the Solr/Zookeeper ensemble:
 $ docker-compose up
 
 # Test connectivity (should return 200 OK)
-$ curl -I http://localhost:8983/solr/ping
+$ curl -s "http://localhost:8983/api/node/system" | jq .security
+{
+  "tls": false
+}
 
 # Activate security
 $ docker exec -it solr solr zk cp file:/opt/solr/server/solr/security.json zk:/security.json -z zookeeper:2181
+
+# Test security (should return no data as we are not authorized)
+$ curl "http://localhost:8983/api/node/system"
+
+# Fake forward authentication (should return 200)
+$ curl -sH "X-Forwarded-User: alice" "http://localhost:8983/api/node/system" \
+    | jq .security
+{
+  "authenticationPlugin": "cool.solr.security.ForwardAuthPlugin",
+  "authorizationPlugin": "cool.solr.security.DefaultRuleBasedAuthorizationPlugin",
+  "username": "alice",
+  "roles": [
+    "admin"
+  ],
+  "tls": false
+}
 ```
 
 ## Building the project
