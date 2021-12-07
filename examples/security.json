@@ -7,7 +7,23 @@
         "defaultRole": "admin",
         "permissions": [
             {
-                "name": "all",
+                "name": "security-edit",
+                "role": "admin"
+            },
+            {
+                "name": "schema-edit",
+                "role": "admin"
+            },
+            {
+                "name": "config-edit",
+                "role": "admin"
+            },
+            {
+                "name": "core-admin-edit",
+                "role": "admin"
+            },
+            {
+                "name": "collection-admin-edit",
                 "role": "admin"
             }
         ]
